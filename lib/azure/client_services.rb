@@ -89,6 +89,10 @@ module Azure
       @base_mgmt ||= Azure::BaseManagement::BaseManagementService.new(default_client(options))
     end
 
+    def nsg_management(options = {})
+      @nsg_mgmt ||= Azure::NetworkSecurityGroupManagement::NetworkSecurityGroupManagementService.new(default_client(options))
+    end
+
     private
 
     def default_client(opts)

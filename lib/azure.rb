@@ -39,6 +39,7 @@ module Azure
   autoload :VirtualMachineImageManagementService,     'azure/virtual_machine_image_management/virtual_machine_image_management_service'
   autoload :VirtualMachineManagementService,          'azure/virtual_machine_management/virtual_machine_management_service'
   autoload :VirtualNetworkManagementService,          'azure/virtual_network_management/virtual_network_management_service'
+  autoload :NetworkSecurityGroupManagementService,    'azure/network_security_group_management/network_security_group_management_service'
 
   module BaseManagement
     autoload :ManagementHttpRequest,          'azure/base_management/management_http_request'
@@ -120,6 +121,13 @@ module Azure
     autoload :VirtualNetworkManagementService,  'azure/virtual_network_management/virtual_network_management_service'
     autoload :Serialization,                    'azure/virtual_network_management/serialization'
     autoload :VirtualNetwork,                   'azure/virtual_network_management/virtual_network'
+  end
+
+  module NetworkSecurityGroupManagement
+    autoload :NetworkSecurityGroupManagementService,  'azure/network_security_group_management/network_security_group_management_service'
+    autoload :Serialization,                          'azure/network_security_group_management/serialization'
+    autoload :NetworkSecurityGroup,                   'azure/network_security_group_management/network_security_group'
+    autoload :NetworkSecurityGroupRule,               'azure/network_security_group_management/network_security_group_rule'
   end
 
   class << self

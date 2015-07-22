@@ -138,7 +138,7 @@ module Azure
         end
       end
 
-      def self.rule_protocol(proto)
+      def self.rule_protocol(protocol)
         case protocol
         when :tcp
           'TCP'

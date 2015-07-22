@@ -18,6 +18,18 @@ module Azure
        Serialization.nsg_list_from_xml(response)
       end
 
+      # Public: creates a network security group using the provided configuration
+      #
+      # === Attributes
+      # * +nsg_name+      - String. Name of the NetworkSecurityGroup
+      # * +params+        - Hash.   Options needed to create the NSG
+      #
+      # === Params
+      #
+      # Accepted key/value pairs are:
+      # * +name+        - String.   Required. Specifies the name of the network security group.
+      # * +location+    - String.   Required. Specifies the location where the network security group is created. To see the available locations, you can use List Locations.
+      # * +label+       - String.   Optional. Specifies an identifier for the network security group. The label can be up to 1024 characters long. The label can be used for tracking purposes.
       def create_network_security_group(nsg_name, params)
         params[:label] = params[:label] || ''
         params[:name] = nsg_name
@@ -41,7 +53,6 @@ module Azure
         path = "/services/networking/networksecuritygroups/#{nsg_name}?detaillevel=Full"
         request = client.management_request(:get, path)
         response = request.call
-        puts response.methods
         Serialization.nsg_from_xml(response)
       end
 
@@ -50,6 +61,24 @@ module Azure
         client.management_request(:delete, path).call
       end
 
+      # Public: create a network security rule on an NSG
+      #
+      # === Attributes
+      # * +nsg_name+      - String. Name of the NetworkSecurityGroup
+      # * +params+        - Hash.   Options needed to create the NSG
+      #
+      # === Params
+      #
+      # Accepted key/value pairs are:
+      # * +name+                        - String.   Specifies the name of the network security group rule.
+      # * +type+                        - Symbol.   Specifies the type of the network security rule. Possible values are: :inbound, :outbound
+      # * +priority+                    - String.   Specifies the priority of the network security rule. Rules with lower priority are evaluated first. This value can be between 100 and 4096.
+      # * +action+                      - Symbol.   Specifies the action that is performed when the network security rule is matched. Possible values are: :allow, :deny
+      # * +source_address_prefix+       - String.   Specifies the CIDR or source IP range. An asterisk (*) can also be used to match all source IPs.
+      # * +source_port_range+           - String.   Specifies the source port or range. This value can be between 0 and 65535. An asterisk (*) can also be used to match all ports.
+      # * +destination_addresss_prefix+ - String.   Specifies the CIDR or destination IP range. An asterisk (*) can also be used to match all destination IPs.
+      # * +destination_port_range+      - String.   Specifies the destination port or range. This value can be between 0 and 65535. An asterisk (*) can also be used to match all ports.
+      # * +protocol+                    - Symbol.   Specifies the protocol of the network security rule. Possible values are: :tcp, :udp, :any
       def set_network_security_rule(nsg_name, params)
         # if the NetworkSecurityGroup name is nil/empty
         # or the rule name is, explode!
@@ -73,19 +102,52 @@ module Azure
         nil
       end
 
+      # Public: add a network security group to a role
+      #
+      # === Attributes
+      # * +nsg_name+      - String. Name of the NetworkSecurityGroup
+      # * +params+        - Hash.   Options needed to create the NSG
+      #
+      # === Params
+      #
+      # Accepted key/value pairs are:
+      # * +cloud_service_name+  - String.   The cloud service name of VM where you want to add the NSG.
+      # * +deployment_name+     - String.   The deployment name of the VM where you want to add the NSG.
+      # * +role_name+           - String.   The name of the VM you want to add the NSG on.
       def add_network_security_group_to_role(nsg_name, params)
         path = "/services/hostedservices/#{params[:cloud_service_name]}/deployments/#{params[:deployment_name]}/roles/#{params[:role_name]}/networksecuritygroups"
-        puts path
         body = Serialization.add_nsg_to_role_to_xml(nsg_name)
-        puts body
         client.management_request(:post, path, body).call
       end
 
+      # Public: remove a network security group to a role
+      #
+      # === Attributes
+      # * +nsg_name+      - String. Name of the NetworkSecurityGroup
+      # * +params+        - Hash.   Options needed to create the NSG
+      #
+      # === Params
+      #
+      # Accepted key/value pairs are:
+      # * +cloud_service_name+  - String.   The cloud service name of VM where you want to remove the NSG.
+      # * +deployment_name+     - String.   The deployment name of the VM where you want to remove the NSG.
+      # * +role_name+           - String.   The name of the VM you want to remove the NSG from.
       def remove_network_security_group_from_role(nsg_name, params)
-        path = "/services/hostedservices/#{params[:cloud_service_name]}/deployments/#{params[:deployment_name]}/roles/#{params[:role_name]}/networkingsecuritygroups/#{nsg_name}"
+        path = "/services/hostedservices/#{params[:cloud_service_name]}/deployments/#{params[:deployment_name]}/roles/#{params[:role_name]}/networksecuritygroups/#{nsg_name}"
         client.management_request(:delete, path).call
       end
 
+      # Public: get the network security groups of a node
+      #
+      # === Attributes
+      # * +params+        - Hash.   Options needed to create the NSG
+      #
+      # === Params
+      #
+      # Accepted key/value pairs are:
+      # * +cloud_service_name+  - String.   The cloud service name of VM where you want to get the NSG.
+      # * +deployment_name+     - String.   The deployment name of the VM where you want to get the NSG.
+      # * +role_name+           - String.   The name of the VM you want to get the NSG from.
       def get_network_security_group_from_role(params)
         path = "/services/hostedservices/#{params[:cloud_service_name]}/deployments/#{params[:deployment_name]}/roles/#{params[:role_name]}/networksecuritygroups"
 
